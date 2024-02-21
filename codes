@@ -1,0 +1,67 @@
+HTML Form (index.html):
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote File Downloader</title>
+</head>
+<body>
+    <h2>Remote File Downloader</h2>
+    <form action="download.php" method="post">
+        <label for="file-url">Enter File URL:</label><br>
+        <input type="text" id="file-url" name="file-url" required><br><br>
+        <button type="submit">Download File</button>
+    </form>
+</body>
+</html>
+PHP Code (download.php):
+
+
+<?php
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get the file URL from the form
+    $fileUrl = $_POST["file-url"];
+
+    // Set file name
+    $fileName = basename($fileUrl);
+
+    // Set directory where you want to save the downloaded file
+    $directory = "downloads/";
+
+    // Path to save the downloaded file
+    $filePath = $directory . $fileName;
+
+    // Open the file to save the downloaded content
+    $file = fopen($filePath, 'w');
+
+    // Initialize cURL session
+    $curl = curl_init($fileUrl);
+
+    // Set options for cURL
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute cURL session and save the content to the file
+    curl_setopt($curl, CURLOPT_FILE, $file);
+    curl_exec($curl);
+
+    // Close cURL session
+    curl_close($curl);
+
+    // Close the file
+    fclose($file);
+
+    // Check if file is downloaded successfully
+    if (file_exists($filePath)) {
+        echo "File downloaded successfully!";
+    } else {
+        echo "Failed to download the file.";
+    }
+}
+?>
+
+
+
+
